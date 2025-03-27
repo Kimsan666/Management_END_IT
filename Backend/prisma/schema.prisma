@@ -1,4 +1,8 @@
-// Improved Prisma Schema for Inventory Management System
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -10,23 +14,21 @@ datasource db {
 }
 
 model Employee {
-  id               Int         @id @default(autoincrement())
-  firstName        String?
-  lastName         String?
-  email            String      @unique
-  village          String?
-  city             String?
-  province         String?
-  position         String?
-  dateOfBirth      DateTime?
-  dateOfEmployment DateTime    @default(now())
-  isActive         Boolean     @default(true)
-  user             User?
-  images           Image[]
-  phoneNumber      PhoneNumber @relation(fields: [phoneNumberId], references: [id])
-  phoneNumberId    Int
-  createdAt        DateTime    @default(now())
-  updatedAt        DateTime    @updatedAt
+  id           Int           @id @default(autoincrement())
+  firstName    String?
+  lastName     String?
+  email        String        @unique
+  village      String?
+  city         String?
+  province     String?
+  position     String?
+  dateOfBirth  DateTime?
+  isActive     Boolean       @default(true)
+  user         User?
+  images       Image[]
+  phoneNumbers PhoneNumber[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 model User {
@@ -55,19 +57,20 @@ model Product {
   supplierId     Int?
   orderItems     OrderItem[]
   cartItems      CartItem[]
-  createdAt      DateTime            @default(now())
-  updatedAt      DateTime            @updatedAt
   category       Category            @relation(fields: [categoryIdCt], references: [idCt])
   categoryIdCt   Int
   unit           Unit                @relation(fields: [unitIdUt], references: [idUt])
   unitIdUt       Int
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
 }
 
 model Warehouse {
   id        Int              @id @default(autoincrement())
   name      String           @unique
   location  String
-  contact   String?
+  contact   String
+  email     String           @unique
   stocks    WarehouseStock[]
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
@@ -198,7 +201,8 @@ model Unit {
 }
 
 model PhoneNumber {
-  id       Int        @id @default(autoincrement())
-  employee Employee[]
-  number   String     @unique
+  id         Int       @id @default(autoincrement())
+  number     String    @unique
+  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId Int?
 }
