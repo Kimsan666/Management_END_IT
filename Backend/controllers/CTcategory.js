@@ -33,6 +33,27 @@ exports.listCategory = async (req, res) => {
   }
 };
 
+exports.updateCategory = async (req, res) => {
+  try {
+    // code
+    const { name } = req.body;
+
+    const category = await prisma.category.update({
+      where: {
+        idCt: Number(req.params.id),
+      },
+      data: {
+        nameCt: name,
+
+      },
+    });
+    res.send(category)
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "server error listUnit in controller!!!" });
+  }
+};
+
 exports.removeCategory = async (req, res) => {
   //code
   try {

@@ -1,67 +1,66 @@
 const { console } = require("inspector");
 const prisma = require("../config/prisma");
-
-exports.saveSupplier = async (req, res) => {
+exports.saveWarehouse = async (req, res) => {
   try {
-    const { name, contactName, email, phone, address } = req.body;
-    const supplier = await prisma.supplier.create({
+    const { name,location,contact,email } = req.body;
+    const warehouse = await prisma.warehouse.create({
       data: {
         name: name,
-        contactName: contactName,
+        location: location,
+        contact: contact,
         email: email,
-        phone: phone,
-        address: address,
       },
     });
-    res.send(supplier);
+    res.send(warehouse);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "server error saveUnit in controller!!!" });
   }
 };
 
-exports.listSupplier = async (req, res) => {
+exports.listWarehouse = async (req, res) => {
   try {
-    const supplier = await prisma.supplier.findMany();
-    res.send(supplier);
-  } catch (err) {
+    const warehouse = await prisma.warehouse.findMany();
+    res.send(warehouse);
+  } catch (err) {s
     console.log(err);
     res.status(500).json({ message: "server error listUnit in controller!!!" });
   }
 };
-exports.updateSupplier = async (req, res) => {
+
+exports.updateWarehouse = async (req, res) => {
   try {
     // code
-    const { name, contactName, email, phone, address } = req.body;
+    const { name,location,contact,email } = req.body;
 
-    const supplier = await prisma.supplier.update({
+    const warehouse = await prisma.warehouse.update({
       where: {
         id: Number(req.params.id),
       },
       data: {
         name: name,
-        contactName: contactName,
+        location: location,
+        contact: contact,
         email: email,
-        phone: phone,
-        address: address,
+
       },
     });
-    res.send(supplier)
+    res.send(warehouse)
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "server error listUnit in controller!!!" });
   }
 };
 
-exports.removeSupplier = async (req, res) => {
+exports.removeWarehouse = async (req, res) => {
   try {
     const { id } = req.params;
-    const supplier = await prisma.supplier.delete({
+    const warehouse = await prisma.warehouse.delete({
       where: {
         id: Number(id),
       },
     });
-    res.send(supplier);
+    res.send(warehouse);
   } catch (err) {
     console.log(err);
     res

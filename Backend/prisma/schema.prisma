@@ -54,13 +54,9 @@ model Product {
   warehouseStock WarehouseStock[]
   purchaseOrders PurchaseOrderItem[]
   supplier       Supplier?           @relation(fields: [supplierId], references: [id], onUpdate: SetNull)
-  supplierId     Int? 
+  supplierId     Int?
   orderItems     OrderItem[]
   cartItems      CartItem[]
-  category       Category            @relation(fields: [categoryIdCt], references: [idCt])
-  categoryIdCt   Int
-  unit           Unit                @relation(fields: [unitIdUt], references: [idUt])
-  unitIdUt       Int
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
 }
@@ -82,7 +78,11 @@ model WarehouseStock {
   warehouseId      Int
   product          Product   @relation(fields: [productId], references: [id])
   productId        Int
+  Unit             Unit?     @relation(fields: [unitIdUt], references: [idUt], onUpdate: SetNull)
+  unitIdUt         Int?
   totalQuantity    Int       @default(0)
+  category         Category? @relation(fields: [categoryIdCt], references: [idCt], onUpdate: SetNull)
+  categoryIdCt     Int?
   reservedQuantity Int       @default(0)
   minimumStock     Int       @default(0)
   createdAt        DateTime  @default(now())
@@ -185,19 +185,19 @@ model Image {
 }
 
 model Category {
-  idCt      Int       @id @default(autoincrement())
-  nameCt    String    @unique
-  products  Product[]
-  createdDT DateTime  @default(now())
-  updatedDT DateTime  @updatedAt
+  idCt           Int              @id @default(autoincrement())
+  nameCt         String           @unique
+  warehouseStock WarehouseStock[]
+  createdDT      DateTime         @default(now())
+  updatedDT      DateTime         @updatedAt
 }
 
 model Unit {
-  idUt      Int       @id @default(autoincrement())
-  nameUt    String    @unique
-  products  Product[]
-  createdDT DateTime  @default(now())
-  updatedDT DateTime  @updatedAt
+  idUt           Int              @id @default(autoincrement())
+  nameUt         String           @unique
+  warehouseStock WarehouseStock[]
+  createdDT      DateTime         @default(now())
+  updatedDT      DateTime         @updatedAt
 }
 
 model PhoneNumber {
