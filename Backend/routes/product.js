@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const { saveProduct,listsProduct,updateProduct,removeProduct,readProduct,searchfiltersProduct } = require('../controllers/CTproduct')
 
-
-router.post('/product',)
-router.get('/product',)
-router.put('/product/:id',)
-router.delete('/product/:id',)
-router.post('/productby',)
-router.post('/search/filters',)
+router.post('/product',saveProduct)
+router.get('/products/count',listsProduct)
+router.put('/product/:id',updateProduct)
+router.delete('/product/:id',removeProduct)
+router.post('/productby',readProduct)
+router.post('/search/filters',searchfiltersProduct)
 
 
 

@@ -53,8 +53,8 @@ model Product {
   images         Image[]
   warehouseStock WarehouseStock[]
   purchaseOrders PurchaseOrderItem[]
-  supplier       Supplier?           @relation(fields: [supplierId], references: [id])
-  supplierId     Int?
+  supplier       Supplier?           @relation(fields: [supplierId], references: [id], onUpdate: SetNull)
+  supplierId     Int? 
   orderItems     OrderItem[]
   cartItems      CartItem[]
   category       Category            @relation(fields: [categoryIdCt], references: [idCt])
