@@ -1,9 +1,17 @@
 const { console } = require("inspector");
+const prisma = require("../config/prisma");
 
 exports.saveCategory = async (req, res) => {
   //code
   try {
-    res.send("hi saveCategory in controller!!!");
+    const { name } = req.body;
+    const category = await prisma.category.create({ 
+      data: {
+        nameCt: name 
+      } 
+    });
+
+    res.send(category);
   } catch (err) {
     console.log(err);
     res
@@ -15,7 +23,8 @@ exports.saveCategory = async (req, res) => {
 exports.listCategory = async (req, res) => {
   //code
   try {
-    res.send("hi listCategory in controller!!!");
+    const category = await prisma.category.findMany();
+    res.send(category);
   } catch (err) {
     console.log(err);
     res
@@ -28,8 +37,12 @@ exports.removeCategory = async (req, res) => {
   //code
   try {
     const { id } = req.params;
-    console.log(id);
-    res.send("hi removeCategory in controller!!!");
+    const category = await prisma.category.delete({
+      where: {
+        idCt: Number(id),
+      },
+    })
+    res.send(category);
   } catch (err) {
     console.log(err);
     res
