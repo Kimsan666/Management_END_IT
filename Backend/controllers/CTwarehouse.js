@@ -52,6 +52,23 @@ exports.updateWarehouse = async (req, res) => {
   }
 };
 
+exports.readWarehouse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const warehouse = await prisma.warehouse.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+    res.send(warehouse);
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "server error removeUnit in controller!!!" });
+  }
+};
+
 exports.removeWarehouse = async (req, res) => {
   try {
     const { id } = req.params;

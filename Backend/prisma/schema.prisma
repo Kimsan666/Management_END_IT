@@ -53,6 +53,7 @@ model Product {
   images         Image[]
   warehouseStock WarehouseStock[]
   purchaseOrders PurchaseOrderItem[]
+  inputProducct  InputProduct[]
   supplier       Supplier?           @relation(fields: [supplierId], references: [id], onUpdate: SetNull)
   supplierId     Int?
   orderItems     OrderItem[]
@@ -113,6 +114,17 @@ model PurchaseOrder {
   expectedDeliveryDate DateTime?
   createdAt            DateTime            @default(now())
   updatedAt            DateTime            @updatedAt
+}
+
+model InputProduct {
+  idInp        Int      @id @default(autoincrement())
+  quantityPo   Int
+  Quantity_Inp Int
+  Warning      String?
+  createdDT    DateTime @default(now())
+  updatedDT    DateTime @updatedAt
+  Product      Product? @relation(fields: [productId], references: [id])
+  productId    Int?
 }
 
 model PurchaseOrderItem {
@@ -206,3 +218,5 @@ model PhoneNumber {
   Employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId Int?
 }
+
+

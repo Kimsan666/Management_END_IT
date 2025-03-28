@@ -46,6 +46,23 @@ exports.updateUnit = async (req, res) => {
   }
 };
 
+exports.readUnit = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const units = await prisma.unit.findFirst({
+      where: {
+        idUt: Number(id),
+      },
+    });
+    res.send(units);
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Server error readEmployee in controller!!!" });
+  }
+};
+
 exports.removeUnit = async (req, res) => {
   try {
     const { id } = req.params;

@@ -53,6 +53,23 @@ exports.updateSupplier = async (req, res) => {
   }
 };
 
+exports.readSupplier = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const suppliers = await prisma.supplier.findFirst({
+      where: {
+        id: Number(id),
+      },
+    });
+    res.send(suppliers);
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Server error readEmployee in controller!!!" });
+  }
+};
+
 exports.removeSupplier = async (req, res) => {
   try {
     const { id } = req.params;

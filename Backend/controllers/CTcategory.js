@@ -53,6 +53,23 @@ exports.updateCategory = async (req, res) => {
     res.status(500).json({ message: "server error listUnit in controller!!!" });
   }
 };
+exports.readCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const category = await prisma.category.findFirst({
+      where: {
+        idCt: Number(id),
+      },
+
+    });
+    res.send(category);
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Server error readEmployee in controller!!!" });
+  }
+};
 
 exports.removeCategory = async (req, res) => {
   //code
