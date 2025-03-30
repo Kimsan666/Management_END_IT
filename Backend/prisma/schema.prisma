@@ -56,38 +56,39 @@ model Product {
   inputProducct  InputProduct[]
   supplier       Supplier?           @relation(fields: [supplierId], references: [id], onUpdate: SetNull)
   supplierId     Int?
-  orderItems     OrderItem[]
-  cartItems      CartItem[]
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
 }
 
 model Warehouse {
-  id        Int              @id @default(autoincrement())
-  name      String           @unique
-  location  String
-  contact   String
-  email     String           @unique
-  stocks    WarehouseStock[]
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  id            Int              @id @default(autoincrement())
+  name          String           @unique
+  location      String
+  contact       String
+  email         String           @unique
+  stocks        WarehouseStock[]
+  inputProducts InputProduct[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 }
 
 model WarehouseStock {
-  id               Int       @id @default(autoincrement())
-  warehouse        Warehouse @relation(fields: [warehouseId], references: [id])
+  id               Int         @id @default(autoincrement())
+  warehouse        Warehouse   @relation(fields: [warehouseId], references: [id])
   warehouseId      Int
-  product          Product   @relation(fields: [productId], references: [id])
+  product          Product     @relation(fields: [productId], references: [id])
   productId        Int
-  Unit             Unit?     @relation(fields: [unitIdUt], references: [idUt], onUpdate: SetNull)
+  Unit             Unit?       @relation(fields: [unitIdUt], references: [idUt], onUpdate: SetNull)
   unitIdUt         Int?
-  totalQuantity    Int       @default(0)
-  category         Category? @relation(fields: [categoryIdCt], references: [idCt], onUpdate: SetNull)
+  totalQuantity    Int         @default(0)
+  category         Category?   @relation(fields: [categoryIdCt], references: [idCt], onUpdate: SetNull)
   categoryIdCt     Int?
-  reservedQuantity Int       @default(0)
-  minimumStock     Int       @default(0)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  orderItems       OrderItem[]
+  cartItems        CartItem[]
+  reservedQuantity Int         @default(0)
+  minimumStock     Int         @default(0)
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 }
 
 model Supplier {
@@ -117,14 +118,21 @@ model PurchaseOrder {
 }
 
 model InputProduct {
-  idInp        Int      @id @default(autoincrement())
+  idInp        Int        @id @default(autoincrement())
   quantityPo   Int
   Quantity_Inp Int
+  minimumStock Int        @default(50)
   Warning      String?
-  createdDT    DateTime @default(now())
-  updatedDT    DateTime @updatedAt
-  Product      Product? @relation(fields: [productId], references: [id])
+  createdDT    DateTime   @default(now())
+  updatedDT    DateTime   @updatedAt
+  Product      Product?   @relation(fields: [productId], references: [id])
   productId    Int?
+  Warehouse    Warehouse? @relation(fields: [warehouseId], references: [id])
+  warehouseId  Int?
+  Category     Category?  @relation(fields: [categoryIdCt], references: [idCt])
+  categoryIdCt Int?
+  Unit         Unit?      @relation(fields: [unitIdUt], references: [idUt])
+  unitIdUt     Int?
 }
 
 model PurchaseOrderItem {
@@ -139,47 +147,51 @@ model PurchaseOrderItem {
 }
 
 model Cart {
-  id        Int        @id @default(autoincrement())
-  user      User       @relation(fields: [userId], references: [id])
-  userId    Int
-  items     CartItem[]
-  status    String     @default("ACTIVE")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          Int        @id @default(autoincrement())
+  user        User       @relation(fields: [userId], references: [id])
+  userId      Int
+  nameCtm     String
+  items       CartItem[]
+  nameDriver  String?
+  carRegis    String?
+  quantityTot Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model CartItem {
-  id        Int      @id @default(autoincrement())
-  cart      Cart     @relation(fields: [cartId], references: [id])
-  cartId    Int
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  quantity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               Int             @id @default(autoincrement())
+  cart             Cart            @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId           Int
+  quantity         Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  product          WarehouseStock? @relation(fields: [warehouseStockId], references: [id])
+  warehouseStockId Int
 }
 
 model Order {
-  id         Int         @id @default(autoincrement())
-  nameCtm    String
-  user       User        @relation(fields: [userId], references: [id])
-  userId     Int
-  items      OrderItem[]
-  nameDriver String?
-  carRegis   String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
+  id          Int         @id @default(autoincrement())
+  nameCtm     String
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int
+  items       OrderItem[]
+  quantityTot Int         @default(0)
+  nameDriver  String?
+  carRegis    String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model OrderItem {
-  id        Int      @id @default(autoincrement())
-  order     Order    @relation(fields: [orderId], references: [id])
-  orderId   Int
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  quantity  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               Int             @id @default(autoincrement())
+  order            Order           @relation(fields: [orderId], references: [id])
+  orderId          Int
+  quantity         Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  product          WarehouseStock? @relation(fields: [warehouseStockId], references: [id])
+  warehouseStockId Int
 }
 
 model Image {
@@ -200,6 +212,7 @@ model Category {
   idCt           Int              @id @default(autoincrement())
   nameCt         String           @unique
   warehouseStock WarehouseStock[]
+  inputproduct   InputProduct[]
   createdDT      DateTime         @default(now())
   updatedDT      DateTime         @updatedAt
 }
@@ -208,6 +221,7 @@ model Unit {
   idUt           Int              @id @default(autoincrement())
   nameUt         String           @unique
   warehouseStock WarehouseStock[]
+  inputproduct   InputProduct[]
   createdDT      DateTime         @default(now())
   updatedDT      DateTime         @updatedAt
 }
@@ -218,5 +232,3 @@ model PhoneNumber {
   Employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId Int?
 }
-
-
