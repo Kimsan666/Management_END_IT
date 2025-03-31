@@ -6,7 +6,19 @@ exports.listUser = async (req, res) => {
         id: true,
         username: true,
         role: true,
-        employeeId: true,
+        employee: {
+          select: {
+            firstName: true,
+            lastName: true,
+            position: true,
+            email: true,
+            phoneNumbers: {
+              select: {
+                number: true,
+              },
+            },
+          },
+        },
       },
     });
     res.send(users);
@@ -189,11 +201,9 @@ exports.clearUserCart = async (req, res) => {
 
     // ถ้าไม่พบตะกร้า หรือไม่ใช่ตะกร้าของผู้ใช้
     if (!cart) {
-      return res
-        .status(400)
-        .json({
-          message: "ไม่พบตะกร้านี้ หรือไม่ใช่ตะกร้าของผู้ใช้ที่ล็อกอิน",
-        });
+      return res.status(400).json({
+        message: "ไม่พบตะกร้านี้ หรือไม่ใช่ตะกร้าของผู้ใช้ที่ล็อกอิน",
+      });
     }
 
     // เริ่มต้นลบสินค้าจาก CartItem และอัพเดต reservedQuantity
@@ -252,10 +262,10 @@ exports.saveOrder = async (req, res) => {
     // ค้นหาข้อมูลจาก Cart ที่ระบุ
     const cart = await prisma.cart.findUnique({
       where: {
-        id: Number(id), // ตรวจสอบให้แน่ใจว่า cartId เป็นตัวเลข
+        id: Number(id),
       },
       include: {
-        items: true, // ดึงข้อมูล cart items มาด้วย
+        items: true,
       },
     });
 
@@ -263,7 +273,7 @@ exports.saveOrder = async (req, res) => {
       return res.status(404).json({ message: "Cart ไม่พบ" });
     }
 
-    // ค้นหาผู้ใช้ (เช่นเดียวกับที่ทำในส่วนอื่น)
+    // ค้นหาผู้ใช้
     const user = await prisma.user.findFirst({
       where: { id: Number(req.user.id) },
     });
@@ -278,40 +288,47 @@ exports.saveOrder = async (req, res) => {
         nameCtm: cart.nameCtm,
         carRegis: cart.carRegis,
         nameDriver: cart.nameDriver,
-        userId: user.id, // หมายถึง user ที่สั่งซื้อ
+        userId: user.id,
         quantityTot: cart.quantityTot,
-        // status: 'Pending', // ตั้งสถานะเริ่มต้นเป็น 'Pending' (ตามความต้องการ)
       },
     });
 
-    // สร้าง OrderItems จากข้อมูลใน Cart
-    const orderItems = cart.items.map((item) => ({
-      orderId: newOrder.id, // เชื่อมโยง OrderItems กับ Order ใหม่
-      warehouseStockId: item.warehouseStockId,
-      quantity: item.quantity,
-    }));
+    // สร้าง OrderItems และอัปเดต reservedQuantity และ totalQuantity ของ WarehouseStock
+    for (let item of cart.items) {
+      await prisma.orderItem.create({
+        data: {
+          orderId: newOrder.id,
+          warehouseStockId: item.warehouseStockId,
+          quantity: item.quantity,
+        },
+      });
 
-    // เพิ่ม OrderItems ลงในฐานข้อมูล
-    await prisma.orderItem.createMany({
-      data: orderItems,
-    });
+      // อัปเดต warehouseStock
+      await prisma.warehouseStock.update({
+        where: { id: item.warehouseStockId },
+        data: {
+          reservedQuantity: {
+            decrement: item.quantity, // ลด reservedQuantity
+          },
+          totalQuantity: {
+            decrement: item.quantity, // ลด totalQuantity
+          },
+        },
+      });
+    }
 
-    // ลบข้อมูลใน Cart และ CartItem หลังจากย้ายไปที่ Order และ OrderItem
-    await prisma.cartItem.deleteMany({
-      where: { cartId: cart.id },
-    });
+    // ลบข้อมูลใน Cart และ CartItem
+    await prisma.cartItem.deleteMany({ where: { cartId: cart.id } });
+    await prisma.cart.delete({ where: { id: cart.id } });
 
-    await prisma.cart.delete({
-      where: { id: cart.id },
-    });
-
-    // ส่งคำตอบกลับไปยัง Client
-    res.status(200).json({ message: "Order ได้รับการบันทึกสำเร็จ" });
+    res.status(200).json({ message: "Order ได้รับการบันทึกสำเร็จ และอัปเดตสต็อกเรียบร้อยแล้ว" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "เกิดข้อผิดพลาดในเซิร์ฟเวอร์" });
   }
 };
+
+
 
 exports.getOrder = async (req, res) => {
   try {
@@ -320,19 +337,19 @@ exports.getOrder = async (req, res) => {
       include: {
         items: {
           include: {
-            product: { 
+            product: {
               include: {
-                product: true 
-              } 
+                product: true,
+              },
             },
           },
         },
       },
     });
-    if(orders.length === 0) {
+    if (orders.length === 0) {
       return res.status(400).json({ ok: false, message: "No orders" });
     }
-    res.json({ok: true, orders});
+    res.json({ ok: true, orders });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "server error listUser in controller!!!" });
