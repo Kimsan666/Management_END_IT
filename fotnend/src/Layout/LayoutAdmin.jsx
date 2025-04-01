@@ -1,13 +1,19 @@
 import React from "react";
-import { Outlet } from 'react-router-dom'
+import { Outlet } from "react-router-dom";
+import SiarbarAdmin from "../components/admin/SiarbarAdmin";
+import HeaderBar from "../components/admin/HeaderBar";
 
 const LayoutAdmin = () => {
   return (
-    <div>
-      <h1>Sidebar</h1>
-      <h1>Header</h1>
-      <hr/>
-      <Outlet />
+    <div className="flex h-screen">
+      <SiarbarAdmin />
+
+      <div className="flex-1 flex flex-col ">
+        <HeaderBar />
+        <main className="flex-1  p-6 bg-gray-100 overflow-y-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

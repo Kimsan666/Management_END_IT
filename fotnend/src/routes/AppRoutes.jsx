@@ -17,12 +17,15 @@ import Warehouse from "../page/Admin/Warehouse/Warehouse";
 import WarehouseStock from "../page/Admin/WarehouseStock/WarehouseStock";
 import InputProduct from "../page/Admin/InputProduct/InputProduct";
 import Register from "../page/Admin/Register/Register";
+import ProtectRouuser from "./ProtectRouuser";
+import ProtectRouadmin from "./ProtectRouadmin";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
   {
     path: "/user",
-    element: <Layout />,
+    // element: <Layout />,
+    element: <ProtectRouuser element={<Layout />}/>,
     children: [
       { index: true, element: <Shop /> },
       { path: "/user/cart", element: <Cart /> },
@@ -32,7 +35,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <LayoutAdmin />,
+    element:<ProtectRouadmin element={<LayoutAdmin />}/>,
     children: [
       { index: true, element: <Dasbroard /> },
       { path: "/admin/category", element: <Categorys /> },
