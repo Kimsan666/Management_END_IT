@@ -1,4 +1,5 @@
 import React from "react";
+
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "../page/auth/Login/login";
 import Shop from "../page/User/PageShop/shop";
@@ -18,31 +19,30 @@ import InputProduct from "../page/Admin/InputProduct/InputProduct";
 import Register from "../page/Admin/Register/Register";
 
 const router = createBrowserRouter([
+  { path: "/", element: <Login /> },
   {
-    path: '/',
+    path: "/user",
     element: <Layout />,
     children: [
-      { index: true, element: <Login /> },
-      { path: '/shop', element: <Shop /> },
-      { path: '/cart', element: <Cart /> },
-      { path: '/history', element: <History /> },
-      { path: '/checkout', element: <CheckOut /> },
-
+      { index: true, element: <Shop /> },
+      { path: "/user/cart", element: <Cart /> },
+      { path: "/user/history", element: <History /> },
+      { path: "/user/checkout", element: <CheckOut /> },
     ],
   },
   {
-    path: '/admin',
+    path: "/admin",
     element: <LayoutAdmin />,
     children: [
       { index: true, element: <Dasbroard /> },
-      {path: '/admin/category', element: <Categorys />},
-      {path: '/admin/product', element: <Product />},
-      {path: '/admin/unit', element: <Unit />},
-      {path: '/admin/supplier', element: <Supplier />},
-      {path: '/admin/warehouse', element: <Warehouse />},
-      {path: '/admin/warehousestock', element: <WarehouseStock />},
-      {path: '/admin/inputproduct', element: <InputProduct />},
-      {path: '/admin/register', element: <Register />},
+      { path: "/admin/category", element: <Categorys /> },
+      { path: "/admin/product", element: <Product /> },
+      { path: "/admin/unit", element: <Unit /> },
+      { path: "/admin/supplier", element: <Supplier /> },
+      { path: "/admin/warehouse", element: <Warehouse /> },
+      { path: "/admin/warehousestock", element: <WarehouseStock /> },
+      { path: "/admin/inputproduct", element: <InputProduct /> },
+      { path: "/admin/register", element: <Register /> },
     ],
   },
 ]);

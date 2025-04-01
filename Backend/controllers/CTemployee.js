@@ -14,6 +14,7 @@ exports.saveEmployee = async (req, res) => {
       dateOfBirth,
       number,
       images,
+      users,
     } = req.body;
     const birthDate = new Date(dateOfBirth);
     birthDate.setUTCHours(0, 0, 0, 0);
@@ -27,10 +28,16 @@ exports.saveEmployee = async (req, res) => {
         province: province,
         position: position,
         dateOfBirth: birthDate,
-        phoneNumbers:{
+        phoneNumbers: {
           create: number.map((item) => ({
-            number: item.number
-          }))
+            number: item.number,
+          })),
+        },
+        user: {
+          create: {
+            username: users.username,
+            password: users.password,
+          },
         },
         images: {
           create: images.map((item) => ({
@@ -59,6 +66,7 @@ exports.listsEmployee = async (req, res) => {
       include: {
         phoneNumbers: true,
         images: true,
+        user: true,
       },
     });
     res.send(employees);
@@ -110,10 +118,10 @@ exports.updateEmployee = async (req, res) => {
         province: province,
         position: position,
         dateOfBirth: birthDate,
-        phoneNumbers:{
+        phoneNumbers: {
           create: number.map((item) => ({
-            number: item.number
-          }))
+            number: item.number,
+          })),
         },
         images: {
           create: images.map((item) => ({
@@ -198,7 +206,6 @@ const handleQuery = async (req, res, query) => {
         firstName: {
           contains: query,
         },
-        
       },
       include: {
         phoneNumbers: true,
@@ -208,9 +215,9 @@ const handleQuery = async (req, res, query) => {
     res.send(employees);
   } catch (err) {
     console.log(err);
-    res
-      .status(500)
-      .json({ message: "Server error Search handleQuery Employee in controller!!!" });
+    res.status(500).json({
+      message: "Server error Search handleQuery Employee in controller!!!",
+    });
   }
 };
 
