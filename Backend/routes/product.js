@@ -1,14 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { saveProduct,listsProduct,updateProduct,removeProduct,readProduct,listbyProduct,searchfiltersProduct } = require('../controllers/CTproduct')
+const {authCheck,adminCheck} = require('../middlewares/authCheck')
+const { saveProduct,listsProduct,updateProduct,removeProduct,readProduct,listbyProduct,searchfiltersProduct,UploadImages,RemoveImage } = require('../controllers/CTproduct')
 
-router.post('/product',saveProduct)
-router.get('/products/:count',listsProduct)
-router.put('/product/:id',updateProduct)
-router.get('/product/:id',readProduct)
-router.delete('/product/:id',removeProduct)
-router.post('/productby', listbyProduct)
-router.post('/search/filters',searchfiltersProduct)
+router.post('/product',authCheck,adminCheck,saveProduct)
+router.get('/products/:count',authCheck,adminCheck,listsProduct)
+router.put('/product/:id',authCheck,adminCheck,updateProduct)
+router.get('/product/:id',authCheck,adminCheck,readProduct)
+router.delete('/product/:id',authCheck,adminCheck,removeProduct)
+router.post('/productby', authCheck,adminCheck,listbyProduct)
+router.post('/search/filters',authCheck,adminCheck,searchfiltersProduct)
+
+router.post('/images',authCheck,adminCheck,UploadImages)
+router.post('/removeimage',authCheck,adminCheck,RemoveImage)
 
 
 

@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import FormCategory from "../../../components/admin/FormCategory";
 
 const Categorys = () => {
   return (
-    <div>Categorys</div>
-  )
-}
+    <div>
+      <FormCategory />
+    </div>
+  );
+};
 
-export default Categorys
+export default Categorys;

@@ -17,7 +17,7 @@ exports.saveInputProduct = async (req, res) => {
     const newInput = await prisma.inputProduct.create({
       data: {
         productId: parseInt(productId),
-        warehouseId: warehouseId, 
+        warehouseId: warehouseId,
         quantityPo: parseInt(quantityPo),
         Quantity_Inp: parseInt(Quantity_Inp),
         minimumStock: minimumStock,
@@ -31,7 +31,7 @@ exports.saveInputProduct = async (req, res) => {
     const existingStock = await prisma.warehouseStock.findFirst({
       where: {
         productId: parseInt(productId),
-        warehouseId: parseInt(warehouseId), 
+        warehouseId: parseInt(warehouseId),
       },
     });
 
@@ -136,5 +136,74 @@ exports.removeInputProduct = async (req, res) => {
     res
       .status(500)
       .json({ message: "server error removeInputProduct in controller!!!" });
+  }
+};
+
+const handleQuery = async (req, res, query) => {
+  try {
+    const inputProducts = await prisma.inputProduct.findMany({
+      where: {
+        Product: {
+          name: {
+            contains: query,
+          },
+        },
+      },
+      include: {
+        Product: true,
+        Warehouse: true,
+        Category: true,
+        Unit: true,
+      },
+    });
+    res.send(inputProducts);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Server error Search handleQuery Employee in controller!!!",
+    });
+  }
+};
+
+// const handleSuppiler = async (req, res, supplierId) => {
+//   try {
+//     const products = await prisma.product.findMany({
+//       where: {
+//         supplierId: {
+//           in: supplierId.map((id) => Number(id)),
+//         },
+//       },
+//       include: {
+//         supplier: true,
+//         images: true,
+//       },
+//     });
+//     res.send(products);
+//   } catch (err) {
+//     console.log(err);
+//     res
+//       .status(500)
+//       .json({ message: "Server error Search handleQuery in controller!!!" });
+//   }
+// };
+exports.searchfiltersInputproduct = async (req, res) => {
+  try {
+    const { query, unit, supplier } = req.body;
+    if (query) {
+      console.log("query-->", query);
+      await handleQuery(req, res, query);
+    }
+    // if (unit) {
+    //   console.log("unit-->", unit);
+    // }
+    // if (supplier) {
+    //   console.log("supplier-->", supplier);
+    //   await handleSuppiler(req, res, supplier);
+    // }
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Server error searchfiltersEmployee in controller!!!" });
   }
 };

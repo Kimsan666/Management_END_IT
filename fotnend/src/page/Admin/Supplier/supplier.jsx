@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import FormSupplier from "../../../components/admin/FormSupplier";
 
 const supplier = () => {
   return (
-    <div>supplier</div>
-  )
-}
+    <div>
+      <FormSupplier />
+    </div>
+  );
+};
 
-export default supplier
+export default supplier;

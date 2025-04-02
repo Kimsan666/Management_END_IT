@@ -2,7 +2,25 @@ const { console } = require("inspector");
 const prisma = require("../config/prisma");
 exports.saveWarehouse = async (req, res) => {
   try {
-    const { name,location,contact,email } = req.body;
+    const { name, location, contact, email } = req.body;
+
+    const existingWarehouse = await prisma.warehouse.findFirst({
+      where: {
+        OR: [{ name: name }, { contact: contact }, { email: email }],
+      },
+    });
+
+    if (existingWarehouse) {
+      let errorMessage = "ຂໍ້ມູນຊ້ຳ: ";
+      if (existingWarehouse.name === name) errorMessage += "ຊື່ສາງ, ";
+      if (existingWarehouse.contact === contact) errorMessage += "ເບີໂທ, ";
+      if (existingWarehouse.email === email) errorMessage += "ອີເມວ, ";
+
+      return res
+        .status(400)
+        .json({ message: errorMessage + "ມີຢູ່ໃນລະບົບແລ້ວ!!!" });
+    }
+
     const warehouse = await prisma.warehouse.create({
       data: {
         name: name,
@@ -22,7 +40,8 @@ exports.listWarehouse = async (req, res) => {
   try {
     const warehouse = await prisma.warehouse.findMany();
     res.send(warehouse);
-  } catch (err) {s
+  } catch (err) {
+    s;
     console.log(err);
     res.status(500).json({ message: "server error listUnit in controller!!!" });
   }
@@ -31,7 +50,7 @@ exports.listWarehouse = async (req, res) => {
 exports.updateWarehouse = async (req, res) => {
   try {
     // code
-    const { name,location,contact,email } = req.body;
+    const { name, location, contact, email } = req.body;
 
     const warehouse = await prisma.warehouse.update({
       where: {
@@ -42,10 +61,9 @@ exports.updateWarehouse = async (req, res) => {
         location: location,
         contact: contact,
         email: email,
-
       },
     });
-    res.send(warehouse)
+    res.send(warehouse);
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "server error listUnit in controller!!!" });

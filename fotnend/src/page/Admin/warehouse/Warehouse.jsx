@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import Formwarehouse from "../../../components/admin/Formwarehouse";
 
 const Warehouse = () => {
   return (
-    <div>Warehouse</div>
-  )
-}
+    <div>
+      <Formwarehouse />
+    </div>
+  );
+};
 
-export default Warehouse
+export default Warehouse;

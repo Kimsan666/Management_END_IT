@@ -1,5 +1,7 @@
 // const { console } = require("inspector");
 const prisma = require("../config/prisma");
+const cloudinary = require ('cloudinary').v2;
+
 
 exports.saveProduct = async (req, res) => {
   try {
@@ -13,15 +15,15 @@ exports.saveProduct = async (req, res) => {
         supplierId: parseInt(supplierId),
         images: {
           create: images.map((item) => ({
-            idasset: item.idasset,
-            idpublic: item.idpublic,
+            idasset: item.asset_id,
+            idpublic: item.public_id,
             url: item.url,
-            SecureUrl: item.SecureUrl,
+            SecureUrl: item.secure_url,
           })),
         },
       },
     });
-    res.send("Save Product Success");
+    res.send(product);
   } catch (err) {
     console.log(err);
     res
@@ -203,9 +205,50 @@ exports.searchfiltersProduct = async (req, res) => {
       await handleSuppiler(req, res, supplier);
     }
   } catch (err) {
-    console.log(err);
+    console.log(err);d
     res
       .status(500)
       .json({ message: "Server error searchfiltersProduct in controller!!!" });
   }
 };
+
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUND_NAME,
+  api_key: process.env.CLOUDINARY_AIP_KEY,
+  api_secret: process.env.CLOUDINARY_AIP_SECRET,
+});
+
+exports.UploadImages = async (req,res) => {
+ 
+  try{
+    console.log(req.body)
+    const result = await cloudinary.uploader.upload(req.body.image, {
+      public_id: `JIMCOM-${Date.now()}`,
+      resource_type: 'auto',
+      folder:"PRODUCT_WAREHOUSE"
+    });
+    res.send(result);
+  }catch(err){
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Server error UploadImages in controller!!!" });
+  }
+}
+exports.RemoveImage = async (req,res) => {
+ 
+  try{
+    
+    const {pulic_id} = req.body
+    cloudinary.uploader.destroy(pulic_id,(result)=>{
+      res.send(result)
+    })
+
+  }catch(err){
+    console.log(err);
+    res
+      .status(500)
+      .json({ message: "Server error RemoveImage in controller!!!" });
+  }
+}

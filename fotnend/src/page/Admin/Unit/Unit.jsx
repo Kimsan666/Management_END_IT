@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import FormUnit from "../../../components/admin/FormUnit";
 
 const Unit = () => {
   return (
-    <div>Unit</div>
-  )
-}
+    <div>
+      <FormUnit />
+    </div>
+  );
+};
 
-export default Unit
+export default Unit;

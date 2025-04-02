@@ -1,8 +1,9 @@
 import React from 'react'
+import FormInputProduct from '../../../components/admin/FormInputProduct'
 
 const InputProduct = () => {
   return (
-    <div>InputProduct</div>
+    <div><FormInputProduct/></div>
   )
 }
 

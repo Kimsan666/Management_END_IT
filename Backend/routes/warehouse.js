@@ -1,12 +1,17 @@
-const express = require("express")
+const express = require("express");
 const router = express.Router();
-const {saveWarehouse,listWarehouse,updateWarehouse,readWarehouse,removeWarehouse} = require('../controllers/CTwarehouse')
+const {
+  saveWarehouse,
+  listWarehouse,
+  updateWarehouse,
+  readWarehouse,
+  removeWarehouse,
+} = require("../controllers/CTwarehouse");
+const { authCheck, adminCheck } = require("../middlewares/authCheck");
+router.post("/warehouse", authCheck, adminCheck, saveWarehouse);
+router.get("/warehouses", authCheck, adminCheck, listWarehouse);
+router.get("/warehouse/:id", authCheck, adminCheck, readWarehouse);
+router.put("/warehouse/:id", authCheck, adminCheck, updateWarehouse);
+router.delete("/warehouse/:id", authCheck, adminCheck, removeWarehouse);
 
-router.post('/warehouse',saveWarehouse)
-router.get('/warehouses',listWarehouse)
-router.get('/warehouse/:id',readWarehouse)
-router.put('/warehouse/:id',updateWarehouse)
-router.delete('/warehouse/:id',removeWarehouse)
-
-
-module.exports = router
+module.exports = router;

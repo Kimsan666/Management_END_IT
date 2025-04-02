@@ -19,6 +19,8 @@ import InputProduct from "../page/Admin/InputProduct/InputProduct";
 import Register from "../page/Admin/Register/Register";
 import ProtectRouuser from "./ProtectRouuser";
 import ProtectRouadmin from "./ProtectRouadmin";
+import Order from "../page/Admin/Order/Order";
+import Employee from "../page/Admin/Employee/Employee";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -45,7 +47,8 @@ const router = createBrowserRouter([
       { path: "/admin/warehouse", element: <Warehouse /> },
       { path: "/admin/warehousestock", element: <WarehouseStock /> },
       { path: "/admin/inputproduct", element: <InputProduct /> },
-      { path: "/admin/register", element: <Register /> },
+      { path: "/admin/order", element: <Order /> },
+      { path: "/admin/employee", element: <Employee /> },
     ],
   },
 ]);
