@@ -13,7 +13,7 @@ import Categorys from "../page/Admin/Category/Categorys";
 import Product from "../page/Admin/Product/Product";
 import Unit from "../page/Admin/Unit/Unit";
 import Supplier from "../page/Admin/Supplier/Supplier";
-import Warehouse from "../page/Admin/Warehouse/Warehouse";
+
 import WarehouseStock from "../page/Admin/WarehouseStock/WarehouseStock";
 import InputProduct from "../page/Admin/InputProduct/InputProduct";
 import Register from "../page/Admin/Register/Register";
@@ -22,6 +22,8 @@ import ProtectRouadmin from "./ProtectRouadmin";
 import Order from "../page/Admin/Order/Order";
 import Employee from "../page/Admin/Employee/Employee";
 import EditProduct from "../page/Admin/Product/EditProduct";
+import Warehouse from "../page/Admin/warehouse/Warehouse";
+import EditWarehouse from "../page/Admin/warehouse/EditWarehouse";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -47,6 +49,7 @@ const router = createBrowserRouter([
       { path: "/admin/unit", element: <Unit /> },
       { path: "/admin/supplier", element: <Supplier /> },
       { path: "/admin/warehouse", element: <Warehouse /> },
+      { path: "/admin/warehouse/:id", element: <EditWarehouse /> },
       { path: "/admin/warehousestock", element: <WarehouseStock /> },
       { path: "/admin/inputproduct", element: <InputProduct /> },
       { path: "/admin/order", element: <Order /> },

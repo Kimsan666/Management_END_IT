@@ -6,6 +6,7 @@ import { listProduct,SeachProducts } from "../aip/Product";
 import { listSupplier } from "../aip/Supplier";
 import { listUnit } from "../aip/Unit";
 import { listWarehouse } from "../aip/Warehouse";
+import { listWarehouseStock } from "../aip/WarehouseStock";
 
 const jimstore = (set) => ({
   user: null,
@@ -15,6 +16,7 @@ const jimstore = (set) => ({
   products: [],
   suppliers: [],
   warehouses: [],
+  WarehouseStocks: [],
   actionLogin: async (form) => {
     const res = await axios.post("http://localhost:5003/api/login", form);
     set({
@@ -79,6 +81,16 @@ const jimstore = (set) => ({
       const res = await listWarehouse();
       set({
         warehouses: res.data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  },
+  getWarehouseStocks: async () => {
+    try {
+      const res = await listWarehouseStock();
+      set({
+        WarehouseStocks: res.data,
       });
     } catch (err) {
       console.log(err);

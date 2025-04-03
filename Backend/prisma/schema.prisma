@@ -47,8 +47,8 @@ model User {
 
 model Product {
   id             Int                 @id @default(autoincrement())
-  qrCode         String              
-  name           String              
+  qrCode         String
+  name           String
   description    String?
   images         Image[]
   warehouseStock WarehouseStock[]
@@ -66,6 +66,7 @@ model Warehouse {
   location      String
   contact       String
   email         String           @unique
+  images        Image[]
   stocks        WarehouseStock[]
   inputProducts InputProduct[]
   createdAt     DateTime         @default(now())
@@ -74,9 +75,9 @@ model Warehouse {
 
 model WarehouseStock {
   id               Int         @id @default(autoincrement())
-  warehouse        Warehouse?   @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouse        Warehouse?  @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
   warehouseId      Int?
-  product          Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  product          Product?    @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId        Int?
   Unit             Unit?       @relation(fields: [unitIdUt], references: [idUt], onUpdate: SetNull)
   unitIdUt         Int?
@@ -139,7 +140,7 @@ model PurchaseOrderItem {
   id              Int           @id @default(autoincrement())
   purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
   purchaseOrderId Int
-  product         Product       @relation(fields: [productId], references: [id],onDelete: Cascade)
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId       Int
   quantity        Int
   createdAt       DateTime      @default(now())
@@ -195,17 +196,19 @@ model OrderItem {
 }
 
 model Image {
-  id         Int       @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   asset_id    String
-  public_id  String
-  url        String
+  public_id   String
+  url         String
   secure_url  String
-  employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  employeeId Int?
-  product    Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId  Int?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  employee    Employee?  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employeeId  Int?
+  product     Product?   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId   Int?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Warehouse   Warehouse? @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouseId Int?
 }
 
 model Category {

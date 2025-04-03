@@ -148,6 +148,7 @@ const FormProduct = () => {
               <tr className="text-white my-4 mx-4">
                 <th scope="col">ລຳດັບ</th>
                 <th scope="col">ຮູບພາບສິນຄ້າ</th>
+                <th scope="col">ID</th>
                 <th scope="col">QR Code</th>
                 <th scope="col">ຊື່ສິນຄ້າ</th>
                 <th scope="col">ລາຍລະອຽດສິນຄ້າ</th>
@@ -176,6 +177,7 @@ const FormProduct = () => {
                         </div>
                       )}
                     </td>
+                    <td className="p-2 text-center">{item.id}</td>
                     <td className="p-2 text-center">{item.qrCode}</td>
                     <td className="p-2">{item.name}</td>
                     <td className="p-2 truncate max-w-xs">

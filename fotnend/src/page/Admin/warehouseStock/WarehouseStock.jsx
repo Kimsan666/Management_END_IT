@@ -1,8 +1,9 @@
 import React from 'react'
+import FormWarehouseStock from '../../../components/admin/FormWarehouseStock'
 
 const WarehouseStock = () => {
   return (
-    <div>WarehouseStock</div>
+    <div><FormWarehouseStock/></div>
   )
 }
 

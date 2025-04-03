@@ -1,4 +1,4 @@
-// const { console } = require("inspector");
+const { console } = require("inspector");
 const prisma = require("../config/prisma");
 const cloudinary = require("cloudinary").v2;
 

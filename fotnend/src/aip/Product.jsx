@@ -26,6 +26,7 @@ export const updateProduct = async (token, id, form) => {
   });
 };
 
+
 //aip images
 export const UploadImages = async (token, form) => {
   return await axios.post(

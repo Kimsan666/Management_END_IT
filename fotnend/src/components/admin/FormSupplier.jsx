@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import useJimStore from "../../store/jim-store";
 import { toast } from "react-toastify";
 import { removeSupplier, SaveSupplier } from "../../aip/Supplier";
@@ -13,34 +13,30 @@ const inirialState = {
 
 const FormSupplier = () => {
   const token = useJimStore((state) => state.token);
-  // const categories = useJimStore((state) => state.categories);
-  // const getCategory = useJimStore((state) => state.getCategory);
   const getSupplier = useJimStore((state) => state.getSupplier);
   const suppliers = useJimStore((state) => state.suppliers);
-  console.log(suppliers);
-
   const [form, setForm] = useState(inirialState);
+  const [selectedSupplier, setSelectedSupplier] = useState(null); // สำหรับเก็บข้อมูลที่คลิก
+  const [isModalOpen, setIsModalOpen] = useState(false); // สำหรับควบคุมการเปิด/ปิด modal
 
   useEffect(() => {
     getSupplier();
   }, []);
 
   const handleOnChange = (e) => {
-    console.log(e.target.name, e.target.value);
     setForm({
       ...form,
       [e.target.name]: e.target.value,
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.phone.length !== 8) {
       return toast.error("ກະລຸນາປ້ອນເບີໂທໃຫ້ຄົບ 8 ເລກກ່ອນເຈົ້າ");
     }
-    console.log(form);
     try {
       const res = await SaveSupplier(token, form);
-      console.log(res);
       setForm(inirialState);
       toast.success(`ບັນທຶກ ${res.data.name} ສຳເລັດ`);
       getSupplier();
@@ -55,9 +51,7 @@ const FormSupplier = () => {
 
   const handleRemove = async (id) => {
     try {
-      console.log(id);
       const res = await removeSupplier(token, id);
-      console.log(res);
       toast.success(`ລົບ ${res.data.name} ສຳເລັດ`);
       getSupplier();
     } catch (err) {
@@ -65,11 +59,20 @@ const FormSupplier = () => {
     }
   };
 
+  const handleRowClick = (supplier) => {
+    setSelectedSupplier(supplier); // เก็บข้อมูลที่เลือก
+    setIsModalOpen(true); // เปิด Modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // ปิด Modal
+    setSelectedSupplier(null); // ล้างข้อมูลที่เก็บ
+  };
+
   return (
     <div className="container mx-auto p-4 shadow-md bg-white">
       <form onSubmit={handleSubmit}>
         <h1>ລາຍການຜູ້ສະໜອງ</h1>
-
         <input
           className="border-2 p-2 rounded-md"
           placeholder="ຊື່ບໍລິສັດ"
@@ -77,7 +80,7 @@ const FormSupplier = () => {
           name="name"
           value={form.name}
           onChange={handleOnChange}
-        ></input>
+        />
         <input
           className="border-2 p-2 rounded-md"
           placeholder="ຊື່ຜູ້ຕິດຕໍ່"
@@ -85,7 +88,7 @@ const FormSupplier = () => {
           name="contactName"
           value={form.contactName}
           onChange={handleOnChange}
-        ></input>
+        />
         <input
           className="border-2 p-2 rounded-md"
           placeholder="ອີເມວ"
@@ -93,7 +96,7 @@ const FormSupplier = () => {
           name="email"
           value={form.email}
           onChange={handleOnChange}
-        ></input>
+        />
         <input
           className="border-2 p-2 rounded-md"
           placeholder="ເບີ 9xxxxxxx"
@@ -102,16 +105,11 @@ const FormSupplier = () => {
           onInput={(e) => {
             e.target.value = e.target.value.replace(/\D/g, ""); // ลบตัวอักษรที่ไม่ใช่ตัวเลขทันที
           }}
-          onKeyDown={(e) => {
-            if (!/[0-9]/.test(e.key) && e.key !== "Backspace") {
-              e.preventDefault(); // บล็อกตัวอักษรและอักขระพิเศษ
-            }
-          }}
           inputMode="numeric"
           name="phone"
           value={form.phone}
           onChange={handleOnChange}
-        ></input>
+        />
         <input
           className="border-2 p-2 rounded-md"
           placeholder="ທີ່ຕັ້ງບໍລິສັດ"
@@ -119,36 +117,82 @@ const FormSupplier = () => {
           name="address"
           value={form.address}
           onChange={handleOnChange}
-        ></input>
+        />
         <hr />
         <button className="bg-red-500  hover:bg-red-700 text-white p-2  rounded-md ml-4">
-          ບັນທຶກຜູ້ສະໜອງ
+          ບັນທຶກຜູ່ສະໜອງ
         </button>
       </form>
 
       <hr />
-      <h1 className="text-2xl">ລາຍການປະເພດ</h1>
-      {suppliers.map((item, index) => (
-        <span
-          key={index}
-          className="flex justify-between my-2 items-center p-2 border-2 rounded-md"
-        >
-          {item.id}
-          {item.name}
-          {item.contactName}
-          {item.email}
-          {item.phone}
-          {item.address}
+      <br />
+      <div className="overflow-x-auto mt-6">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead className="bg-gray-800 text-white border">
+            <tr>
+              <th className="p-2">ລຳດັບ</th>
+              <th className="p-2">ຊື່ບໍລິສັດ</th>
+              <th className="p-2">ຊື່ຜູ້ຕິດຕໍ່</th>
+              <th className="p-2">ອີເມວ</th>
+              <th className="p-2">ເບີໂທຕິດຕໍ່</th>
+              <th className="p-2">ທີ່ຕັ້ງບໍລິສັດ</th>
+              <th className="p-2">ວັນທີອັບເດດ</th>
+              <th className="p-2">ຈັດການ</th>
+            </tr>
+          </thead>
+          <tbody>
+            {suppliers.map((item, index) => {
+              return (
+                <tr
+                  key={item.id || index}
+                  className="border-t hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleRowClick(item)} // เรียกใช้งาน handleRowClick
+                >
+                  <td className="p-2 text-center">{index + 1}</td>
+                  <td className="p-2 text-center">{item.name}</td>
+                  <td className="p-2">{item.contactName}</td>
+                  <td className="p-2 truncate max-w-xs">{item.email}</td>
+                  <td className="p-2 truncate max-w-xs">{item.phone}</td>
+                  <td className="p-2 truncate max-w-xs">{item.address}</td>
+                  <td className="p-2 text-center">{item.updatedAt}</td>
+                  <td className="p-2 text-center flex gap-2">
+                    <p
+                      onClick={(e) => {
+                        e.stopPropagation(); // ป้องกันไม่ให้คลิกที่ปุ่มลบแล้วไปเรียก handleRowClick
+                        handleRemove(item.id);
+                      }}
+                      className="bg-red-500 hover:bg-red-700 text-white px-3 py-1 rounded"
+                    >
+                      ລົບ
+                    </p>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
-          <button
-            onClick={() => handleRemove(item.id)}
-            className="bg-red-500  hover:bg-red-700 text-white p-2  rounded-md ml-4"
-          >
-            ລົບ
-          </button>
-        </span>
-      ))}
-      <ul></ul>
+      {/* Modal Popup */}
+      {isModalOpen && selectedSupplier && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-md max-w-md w-full"
+          style={{ animation: "scaleUp 0.3s forwards" }}>
+            <h2 className="text-xl mb-4">ລາຍລະອຽດຂອງຜູ້ສະໜອງ</h2>
+            <p><strong>ຊື່ບໍລິສັດ:</strong> {selectedSupplier.name}</p>
+            <p><strong>ຊື່ຜູ້ຕິດຕໍ່:</strong> {selectedSupplier.contactName}</p>
+            <p><strong>ອີເມວ:</strong> {selectedSupplier.email}</p>
+            <p><strong>ເບີໂທ:</strong> {selectedSupplier.phone}</p>
+            <p><strong>ທີ່ຕັ້ງ:</strong> {selectedSupplier.address}</p>
+            <button
+              className="mt-4 bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md"
+              onClick={handleCloseModal}
+            >
+              ປິດ
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

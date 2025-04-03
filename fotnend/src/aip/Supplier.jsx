@@ -20,3 +20,4 @@ export const removeSupplier = async(token,id)=>{
         }
     })
 }
+

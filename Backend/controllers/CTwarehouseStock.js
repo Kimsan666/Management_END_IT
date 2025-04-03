@@ -22,13 +22,12 @@ const prisma = require("../config/prisma");
 
 exports.listWarehouseStock = async (req, res) => {
   try {
-    
-
+  
     const warehousestocks = await prisma.warehouseStock.findMany({
         orderBy: { createdAt: "desc" },
         include: {
             warehouse: true,
-            products: true,
+            product: true,
             category: true,
             Unit: true
         }
