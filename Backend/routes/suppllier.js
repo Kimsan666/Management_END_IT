@@ -4,7 +4,7 @@ const {saveSupplier,listSupplier,updateSupplier,readSupplier,removeSupplier} = r
 const {authCheck,adminCheck} = require('../middlewares/authCheck')
 
 router.post('/supplier',authCheck,adminCheck,saveSupplier)
-router.get('/suppliers',authCheck,adminCheck,listSupplier)
+router.get('/suppliers',listSupplier)
 router.get('/supplier/:id',authCheck,adminCheck,readSupplier)
 router.put('/supplier/:id',authCheck,adminCheck,updateSupplier)
 router.delete('/supplier/:id',authCheck,adminCheck,removeSupplier)

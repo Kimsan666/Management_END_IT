@@ -37,7 +37,7 @@ model User {
   password   String
   role       String    @default("user")
   enabled    Boolean   @default(true)
-  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employee   Employee? @relation(fields: [employeeId], references: [id], onUpdate: SetNull)
   employeeId Int?      @unique
   orders     Order[]
   carts      Cart[]
@@ -47,8 +47,8 @@ model User {
 
 model Product {
   id             Int                 @id @default(autoincrement())
-  qrCode         String              @unique
-  name           String              @unique
+  qrCode         String              
+  name           String              
   description    String?
   images         Image[]
   warehouseStock WarehouseStock[]
@@ -74,10 +74,10 @@ model Warehouse {
 
 model WarehouseStock {
   id               Int         @id @default(autoincrement())
-  warehouse        Warehouse   @relation(fields: [warehouseId], references: [id])
-  warehouseId      Int
-  product          Product     @relation(fields: [productId], references: [id])
-  productId        Int
+  warehouse        Warehouse?   @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  warehouseId      Int?
+  product          Product?     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId        Int?
   Unit             Unit?       @relation(fields: [unitIdUt], references: [idUt], onUpdate: SetNull)
   unitIdUt         Int?
   totalQuantity    Int         @default(0)
@@ -125,21 +125,21 @@ model InputProduct {
   Warning      String?
   createdDT    DateTime   @default(now())
   updatedDT    DateTime   @updatedAt
-  Product      Product?   @relation(fields: [productId], references: [id])
+  Product      Product?   @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId    Int?
-  Warehouse    Warehouse? @relation(fields: [warehouseId], references: [id])
+  Warehouse    Warehouse? @relation(fields: [warehouseId], references: [id], onUpdate: SetNull)
   warehouseId  Int?
-  Category     Category?  @relation(fields: [categoryIdCt], references: [idCt])
+  Category     Category?  @relation(fields: [categoryIdCt], references: [idCt], onUpdate: SetNull)
   categoryIdCt Int?
-  Unit         Unit?      @relation(fields: [unitIdUt], references: [idUt])
+  Unit         Unit?      @relation(fields: [unitIdUt], references: [idUt], onUpdate: SetNull)
   unitIdUt     Int?
 }
 
 model PurchaseOrderItem {
   id              Int           @id @default(autoincrement())
-  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
   purchaseOrderId Int
-  product         Product       @relation(fields: [productId], references: [id])
+  product         Product       @relation(fields: [productId], references: [id],onDelete: Cascade)
   productId       Int
   quantity        Int
   createdAt       DateTime      @default(now())
@@ -148,7 +148,7 @@ model PurchaseOrderItem {
 
 model Cart {
   id          Int        @id @default(autoincrement())
-  user        User       @relation(fields: [userId], references: [id])
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   nameCtm     String
   items       CartItem[]
@@ -166,14 +166,14 @@ model CartItem {
   quantity         Int
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  product          WarehouseStock? @relation(fields: [warehouseStockId], references: [id])
+  product          WarehouseStock? @relation(fields: [warehouseStockId], references: [id], onDelete: Cascade)
   warehouseStockId Int
 }
 
 model Order {
   id          Int         @id @default(autoincrement())
   nameCtm     String
-  user        User        @relation(fields: [userId], references: [id])
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   items       OrderItem[]
   quantityTot Int         @default(0)
@@ -185,24 +185,24 @@ model Order {
 
 model OrderItem {
   id               Int             @id @default(autoincrement())
-  order            Order           @relation(fields: [orderId], references: [id])
+  order            Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId          Int
   quantity         Int
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
-  product          WarehouseStock? @relation(fields: [warehouseStockId], references: [id])
+  product          WarehouseStock? @relation(fields: [warehouseStockId], references: [id], onDelete: Cascade)
   warehouseStockId Int
 }
 
 model Image {
   id         Int       @id @default(autoincrement())
-  idasset    String
-  idpublic   String
+  asset_id    String
+  public_id  String
   url        String
-  SecureUrl  String
-  employee   Employee? @relation(fields: [employeeId], references: [id])
+  secure_url  String
+  employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   employeeId Int?
-  product    Product?  @relation(fields: [productId], references: [id])
+  product    Product?  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId  Int?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -229,6 +229,6 @@ model Unit {
 model PhoneNumber {
   id         Int       @id @default(autoincrement())
   number     String    @unique
-  Employee   Employee? @relation(fields: [employeeId], references: [id])
+  Employee   Employee? @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   employeeId Int?
 }

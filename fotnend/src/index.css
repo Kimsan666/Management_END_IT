@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+
+@font-face {
+    font-family: 'Sanslem';
+    src: url('public\Font\Sanslem.ttf') format('woff2'),
+         url('public\Font\Sanslem.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+  }
+  

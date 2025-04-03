@@ -10,11 +10,9 @@ export const SaveUnit = async(token,form)=>{
         }
     })
 }
-export const listUnit = async(token)=>{
+export const listUnit = async()=>{
     return await axios.get("http://localhost:5003/api/unit",{
-        headers:{
-            Authorization:`bearer ${token}`,
-        }
+        
     })
 }
 

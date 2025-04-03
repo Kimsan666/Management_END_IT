@@ -9,7 +9,7 @@ const {
 } = require("../controllers/CTwarehouse");
 const { authCheck, adminCheck } = require("../middlewares/authCheck");
 router.post("/warehouse", authCheck, adminCheck, saveWarehouse);
-router.get("/warehouses", authCheck, adminCheck, listWarehouse);
+router.get("/warehouses", listWarehouse);
 router.get("/warehouse/:id", authCheck, adminCheck, readWarehouse);
 router.put("/warehouse/:id", authCheck, adminCheck, updateWarehouse);
 router.delete("/warehouse/:id", authCheck, adminCheck, removeWarehouse);

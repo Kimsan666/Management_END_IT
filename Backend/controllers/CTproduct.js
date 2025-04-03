@@ -1,7 +1,12 @@
 // const { console } = require("inspector");
 const prisma = require("../config/prisma");
-const cloudinary = require ('cloudinary').v2;
+const cloudinary = require("cloudinary").v2;
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUND_NAME,
+  api_key: process.env.CLOUDINARY_AIP_KEY,
+  api_secret: process.env.CLOUDINARY_AIP_SECRET,
+});
 
 exports.saveProduct = async (req, res) => {
   try {
@@ -15,10 +20,10 @@ exports.saveProduct = async (req, res) => {
         supplierId: parseInt(supplierId),
         images: {
           create: images.map((item) => ({
-            idasset: item.asset_id,
-            idpublic: item.public_id,
+            asset_id: item.asset_id,
+            public_id: item.public_id,
             url: item.url,
-            SecureUrl: item.secure_url,
+            secure_url: item.secure_url,
           })),
         },
       },
@@ -53,15 +58,13 @@ exports.listsProduct = async (req, res) => {
 exports.updateProduct = async (req, res) => {
   try {
     const { qrCode, name, description, supplierId, images } = req.body;
+    // code
 
-    //ລົບຮູບເກົາອອກກ່ອນອັບໃຫມ່
-    const { id } = req.params;
     await prisma.image.deleteMany({
       where: {
-        productId: Number(id),
+        productId: Number(req.params.id),
       },
     });
-
     await prisma.product.update({
       where: {
         id: Number(req.params.id),
@@ -73,10 +76,10 @@ exports.updateProduct = async (req, res) => {
         supplierId: parseInt(supplierId),
         images: {
           create: images.map((item) => ({
-            idasset: item.idasset,
-            idpublic: item.idpublic,
+            asset_id: item.asset_id,
+            public_id: item.public_id,
             url: item.url,
-            SecureUrl: item.SecureUrl,
+            secure_url: item.secure_url,
           })),
         },
       },
@@ -92,6 +95,38 @@ exports.updateProduct = async (req, res) => {
 exports.removeProduct = async (req, res) => {
   try {
     const { id } = req.params;
+
+    //ລົບຮູບໃນ Cloudinary
+    //ຄົ້ນຫາສິນຄ້າ Include image
+    const product = await prisma.product.findFirst({
+      where: {
+        id: Number(id),
+      },
+      include: {
+        images: true,
+      },
+    });
+
+    if (!product) {
+      return res.status(400).json({ message: "ບໍ່ມີສິນຄ້າ" });
+    }
+
+    // ລົບຮູບໃນ Cloudinary
+    const deleteimage = product.images.map(
+      async (image) =>
+        new Promise((resolve, reject) => {
+          // ລົບຮູບໃນ Cloudinary
+          cloudinary.uploader.destroy(image.public_id, (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+        })
+    );
+    await Promise.all(deleteimage);
+
     const products = await prisma.product.delete({
       where: {
         id: Number(id),
@@ -205,50 +240,40 @@ exports.searchfiltersProduct = async (req, res) => {
       await handleSuppiler(req, res, supplier);
     }
   } catch (err) {
-    console.log(err);d
+    console.log(err);
+    d;
     res
       .status(500)
       .json({ message: "Server error searchfiltersProduct in controller!!!" });
   }
 };
 
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUND_NAME,
-  api_key: process.env.CLOUDINARY_AIP_KEY,
-  api_secret: process.env.CLOUDINARY_AIP_SECRET,
-});
-
-exports.UploadImages = async (req,res) => {
- 
-  try{
-    console.log(req.body)
+exports.UploadImages = async (req, res) => {
+  try {
+    console.log(req.body);
     const result = await cloudinary.uploader.upload(req.body.image, {
       public_id: `JIMCOM-${Date.now()}`,
-      resource_type: 'auto',
-      folder:"PRODUCT_WAREHOUSE"
+      resource_type: "auto",
+      folder: "PRODUCT_WAREHOUSE",
     });
     res.send(result);
-  }catch(err){
+  } catch (err) {
     console.log(err);
     res
       .status(500)
       .json({ message: "Server error UploadImages in controller!!!" });
   }
-}
-exports.RemoveImage = async (req,res) => {
- 
-  try{
-    
-    const {pulic_id} = req.body
-    cloudinary.uploader.destroy(pulic_id,(result)=>{
-      res.send(result)
-    })
-
-  }catch(err){
+};
+exports.RemoveImage = async (req, res) => {
+  try {
+    const { public_id } = req.body;
+    cloudinary.uploader.destroy(public_id, (result) => {
+      res.send("Remove Image Success!!!");
+    });
+  } catch (err) {
     console.log(err);
     res
       .status(500)
       .json({ message: "Server error RemoveImage in controller!!!" });
   }
-}
+};

@@ -6,7 +6,7 @@ const layout = () => {
     <div>
       <Mainnav />
 
-      <main>
+      <main className="h-full px-4 mt-2 mx-auto">
         <Outlet />
       </main>
     </div>

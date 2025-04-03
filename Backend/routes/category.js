@@ -5,7 +5,7 @@ const { saveCategory,listCategory,updateCategory,readCategory,removeCategory } =
 
 
 router.post('/category',authCheck,adminCheck,saveCategory)
-router.get('/categorys',authCheck,adminCheck,listCategory)
+router.get('/categorys',listCategory)
 router.put('/category/:id',authCheck,adminCheck,updateCategory)
 router.get('/category/:id',authCheck,adminCheck,readCategory)
 router.delete('/category/:id',authCheck,adminCheck,removeCategory)

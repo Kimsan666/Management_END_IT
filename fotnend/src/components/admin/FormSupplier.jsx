@@ -22,7 +22,7 @@ const FormSupplier = () => {
   const [form, setForm] = useState(inirialState);
 
   useEffect(() => {
-    getSupplier(token);
+    getSupplier();
   }, []);
 
   const handleOnChange = (e) => {
@@ -43,7 +43,7 @@ const FormSupplier = () => {
       console.log(res);
       setForm(inirialState);
       toast.success(`ບັນທຶກ ${res.data.name} ສຳເລັດ`);
-      getSupplier(token);
+      getSupplier();
     } catch (err) {
       if (err.response && err.response.status === 400) {
         toast.error(err.response.data.message);
@@ -59,7 +59,7 @@ const FormSupplier = () => {
       const res = await removeSupplier(token, id);
       console.log(res);
       toast.success(`ລົບ ${res.data.name} ສຳເລັດ`);
-      getSupplier(token);
+      getSupplier();
     } catch (err) {
       console.log(err);
     }

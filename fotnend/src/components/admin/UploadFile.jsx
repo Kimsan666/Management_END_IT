@@ -4,11 +4,14 @@ import Resizer from "react-image-file-resizer";
 import { RemoveImage, UploadImages } from "../../aip/Product";
 import useJimStore from "../../store/jim-store";
 import { SquareX } from "lucide-react";
+import { LoaderCircle } from 'lucide-react';
 const UploadFile = ({ form, setForm }) => {
   const token = useJimStore((state) => state.token);
 
   const [isloading, setIsLoading] = useState(false);
   const handleOnCange = (e) => {
+
+    setIsLoading(true);
     const files = e.target.files;
     if (files) {
       setIsLoading(true);
@@ -39,10 +42,13 @@ const UploadFile = ({ form, setForm }) => {
                   ...form,
                   images: allFiles,
                 });
+                setIsLoading(false);
                 toast.success(`ອັບໂຫຼດສຳເລັດ`);
+
               })
               .catch((err) => {
                 console.log(err);
+                setIsLoading(false);
               });
           },
           "base64"
@@ -52,10 +58,21 @@ const UploadFile = ({ form, setForm }) => {
   };
 
   const handleDelete = (public_id) => {
-    console.log(public_id);
+    // console.log(public_id);
+    setIsLoading(true);
+    const images = form.images;
     RemoveImage(token, public_id)
       .then((res) => {
-        console.log(res)
+        const filterImages = images.filter((item)=>{
+          return item.public_id !== public_id
+        })
+        
+        setForm({
+          ...form,
+          images: filterImages
+        })
+        setIsLoading(false);
+        toast.error(`ລົບຮູບພາບສຳເລັດ`);
       })
       .catch((err) => {
         console.log(err);
@@ -65,6 +82,10 @@ const UploadFile = ({ form, setForm }) => {
   return (
     <div className="my-4 border-2 ">
       <div className="flex mx-4 gap-4 my-4">
+        {
+          isloading && <LoaderCircle className="animate-spin w-16 h-16"/>
+        }
+        
         {form.images.map((item, index) => (
           <div className="relative" key={index}>
             <img

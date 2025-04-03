@@ -21,6 +21,7 @@ import ProtectRouuser from "./ProtectRouuser";
 import ProtectRouadmin from "./ProtectRouadmin";
 import Order from "../page/Admin/Order/Order";
 import Employee from "../page/Admin/Employee/Employee";
+import EditProduct from "../page/Admin/Product/EditProduct";
 
 const router = createBrowserRouter([
   { path: "/", element: <Login /> },
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
       { index: true, element: <Dasbroard /> },
       { path: "/admin/category", element: <Categorys /> },
       { path: "/admin/product", element: <Product /> },
+      { path: "/admin/product/:id", element: <EditProduct /> },
       { path: "/admin/unit", element: <Unit /> },
       { path: "/admin/supplier", element: <Supplier /> },
       { path: "/admin/warehouse", element: <Warehouse /> },

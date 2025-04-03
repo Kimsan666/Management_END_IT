@@ -39,7 +39,9 @@ exports.saveSupplier = async (req, res) => {
 
 exports.listSupplier = async (req, res) => {
   try {
-    const supplier = await prisma.supplier.findMany();
+    const supplier = await prisma.supplier.findMany({
+      orderBy: { createdAt: "desc" },
+    });
     res.send(supplier);
   } catch (err) {
     console.log(err);

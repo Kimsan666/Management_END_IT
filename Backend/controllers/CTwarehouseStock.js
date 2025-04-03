@@ -22,10 +22,9 @@ const prisma = require("../config/prisma");
 
 exports.listWarehouseStock = async (req, res) => {
   try {
-    const {count} = req.params
+    
 
     const warehousestocks = await prisma.warehouseStock.findMany({
-        take: parseInt(count),
         orderBy: { createdAt: "desc" },
         include: {
             warehouse: true,
@@ -36,7 +35,7 @@ exports.listWarehouseStock = async (req, res) => {
     }
     );
     res.send(warehousestocks);
-  } catch (err) {s
+  } catch (err) {
     console.log(err);
     res.status(500).json({ message: "server error listWarehouseStock in controller!!!" });
   }

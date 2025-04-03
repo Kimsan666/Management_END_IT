@@ -5,7 +5,7 @@ const { saveUnit,listUnit,removeUnit,readUnit, updateUnit } = require('../contro
 
 
 router.post('/unit',authCheck,adminCheck,saveUnit)
-router.get('/unit',authCheck,adminCheck,listUnit)
+router.get('/unit',listUnit)
 router.get('/unit/:id',authCheck,adminCheck,readUnit)
 router.put('/unit/:id',authCheck,adminCheck,updateUnit)
 router.delete('/unit/:id',authCheck,adminCheck,removeUnit)

@@ -5,10 +5,9 @@ import { SaveWarehouse } from "../../aip/Warehouse";
 
 const inirialState = {
   name: "ລາວຈຳກັsdadດ",
-  email: "2091885104",
+  email: "la7.666@gmail.com",
   contact: "",
   location: "ຈິມມີ້",
-  email: "",
 };
 
 const Formwarehouse = () => {

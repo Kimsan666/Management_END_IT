@@ -7,11 +7,9 @@ export const SaveSupplier = async(token,form)=>{
         }
     })
 }
-export const listSupplier  = async(token)=>{
+export const listSupplier  = async()=>{
     return await axios.get("http://localhost:5003/api/suppliers",{
-        headers:{
-            Authorization:`bearer ${token}`,
-        }
+        
     })
 }
 
